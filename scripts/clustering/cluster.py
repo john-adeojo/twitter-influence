@@ -25,10 +25,6 @@ class ClusterAnalysis:
         clusterer = HDBSCAN(min_cluster_size=self.min_cluster_size, metric=self.metric)
         self.dataframe['cluster'] = clusterer.fit_predict(self.dataframe[['x', 'y']])
         self.dataframe.to_csv(r"C:\Users\johna\anaconda3\envs\twitter-influence-env\twitter-influence\data\02_intermediate\tweet_analysis_data.csv", index=False)
-
-    # def plot_scatter(self):
-    #     fig = px.scatter(self.dataframe, x='x', y='y', color='cluster', hover_name=self.dataframe['name'], opacity=0.4)
-    #     fig.show()
     
     def plot_scatter(self):
         unique_clusters = sorted(self.dataframe['cluster'].unique())
@@ -42,7 +38,6 @@ class ClusterAnalysis:
 
         fig.update_layout(title='Influence Clusters', showlegend=True, width=500, height=500)
         fig.show()
-# hovertext=cluster_data['name']
 
     def run(self):
         self.perform_umap()
