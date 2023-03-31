@@ -24,7 +24,7 @@ class ClusterAnalysis:
         np.random.seed(42)
         clusterer = HDBSCAN(min_cluster_size=self.min_cluster_size, metric=self.metric)
         self.dataframe['cluster'] = clusterer.fit_predict(self.dataframe[['x', 'y']])
-        self.dataframe.to_csv(r"C:\Users\johna\anaconda3\envs\twitter-influence-env\twitter-influence\data\02_intermediate\tweet_analysis_data.csv", index=False)
+        #self.dataframe.to_csv(r"C:\Users\johna\anaconda3\envs\twitter-influence-env\twitter-influence\data\02_intermediate\tweet_analysis_data.csv", index=False)
     
     def plot_scatter(self):
         unique_clusters = sorted(self.dataframe['cluster'].unique())

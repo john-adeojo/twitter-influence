@@ -1,10 +1,29 @@
+import os
+import sys
+import pandas as pd
+import streamlit as st
+
+notebook_dir = os.path.dirname(os.path.abspath("__file__"))
+project_dir = os.path.dirname(notebook_dir)
+
+if project_dir not in sys.path:
+    sys.path.append(project_dir)
+    
+
+influence_metrics_final = pd.read_csv(r"https://raw.githubusercontent.com/john-adeojo/twitter-influence/main/data/02_intermediate/influence_metrics_final.csv")
+
+# from ..scripts.clustering.cluster_streamlit import ClusterAnalysis
+
+
+# import streamlit as st
+
 import pandas as pd
 import numpy as np
 from umap import UMAP
 from hdbscan import HDBSCAN
 import plotly.express as px
 import plotly.graph_objects as go
-
+import streamlit as st
 
 class ClusterAnalysis:
     def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean'):
@@ -24,7 +43,6 @@ class ClusterAnalysis:
         np.random.seed(42)
         clusterer = HDBSCAN(min_cluster_size=self.min_cluster_size, metric=self.metric)
         self.dataframe['cluster'] = clusterer.fit_predict(self.dataframe[['x', 'y']])
-        #self.dataframe.to_csv(r"C:\Users\johna\anaconda3\envs\twitter-influence-env\twitter-influence\data\02_intermediate\tweet_analysis_data.csv", index=False)
     
     def plot_scatter(self):
         unique_clusters = sorted(self.dataframe['cluster'].unique())
@@ -37,9 +55,27 @@ class ClusterAnalysis:
                                      text=cluster_data['name'], textposition='top center', textfont=dict(size=10, color='black')))
 
         fig.update_layout(title='Influence Clusters', showlegend=True, width=750, height=750)
-        fig.show()
+        return fig
+        # st.plotly_chart(fig, use_container_width=True)
 
     def run(self):
         self.perform_umap()
         self.perform_hdbscan()
         self.plot_scatter()
+
+
+
+# Create input widgets in the sidebar
+st.sidebar.header('UMAP and HDBSCAN Parameters')
+n_neighbors = st.sidebar.slider('Number of Neighbors', 2, 50, 5)
+min_cluster_size = st.sidebar.slider('Minimum Cluster Size', 2, 50, 5)
+min_dist = st.sidebar.slider('Minimum Distance', 0.01, 1.0, 0.09, step=0.01)
+metric = st.sidebar.selectbox('Distance Metric', ['euclidean', 'manhattan', 'cosine', 'l1', 'l2'])
+
+# Create an instance of ClusterAnalysis with the user-defined parameters
+ca = ClusterAnalysis(influence_metrics_final, n_neighbors=n_neighbors, min_cluster_size=min_cluster_size, min_dist=min_dist, metric=metric)
+
+# Run the analysis and display the scatter plot
+ca.run()
+scatter_fig = ca.plot_scatter()  # Get the figure object
+st.plotly_chart(scatter_fig, use_container_width=True)

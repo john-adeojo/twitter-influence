@@ -4,7 +4,7 @@ from umap import UMAP
 from hdbscan import HDBSCAN
 import plotly.express as px
 import plotly.graph_objects as go
-
+import streamlit as st
 
 class ClusterAnalysis:
     def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean'):
@@ -24,7 +24,6 @@ class ClusterAnalysis:
         np.random.seed(42)
         clusterer = HDBSCAN(min_cluster_size=self.min_cluster_size, metric=self.metric)
         self.dataframe['cluster'] = clusterer.fit_predict(self.dataframe[['x', 'y']])
-        #self.dataframe.to_csv(r"C:\Users\johna\anaconda3\envs\twitter-influence-env\twitter-influence\data\02_intermediate\tweet_analysis_data.csv", index=False)
     
     def plot_scatter(self):
         unique_clusters = sorted(self.dataframe['cluster'].unique())
@@ -37,7 +36,8 @@ class ClusterAnalysis:
                                      text=cluster_data['name'], textposition='top center', textfont=dict(size=10, color='black')))
 
         fig.update_layout(title='Influence Clusters', showlegend=True, width=750, height=750)
-        fig.show()
+        return fig
+        # st.plotly_chart(fig, use_container_width=True)
 
     def run(self):
         self.perform_umap()
