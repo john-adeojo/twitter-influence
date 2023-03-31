@@ -26,7 +26,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-
 # define cluster class
 class ClusterAnalysis:
     def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean'):
@@ -92,32 +91,31 @@ def run_chisquare_analysis(df, var):
     return standardized_residuals   
 
 
-
-
 def heatmap(cats, title, xlabel, df):
     # Prepare the data for the heatmap
     heatmap_data = df.set_index('cluster')[cats]
 
     # Create the heatmap
-    plt.figure(figsize=(8, 4))
-    sns.heatmap(heatmap_data, cmap='coolwarm', annot=True, linewidths=0.5, center=0)
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel('Cluster')
+    fig, ax = plt.subplots(figsize=(8, 4))
+    sns.heatmap(heatmap_data, cmap='coolwarm', annot=True, linewidths=0.5, center=0, ax=ax)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel('Cluster')
 
     # Display the heatmap in Streamlit
-    st.pyplot()
+    st.pyplot(fig)
         
 
-
+# Streamlit dashboards 
 
 # Create input widgets in the sidebar
 st.title('Twitter Influence Clusters')
 st.sidebar.header('UMAP and HDBSCAN Parameters')
+st.sidebar.text('Adjust hyperparameters and see \n the impact on influencer clustering')
 n_neighbors = st.sidebar.slider('Number of Neighbors', 2, 50, 5)
 min_cluster_size = st.sidebar.slider('Minimum Cluster Size', 2, 50, 5)
 min_dist = st.sidebar.slider('Minimum Distance', 0.01, 1.0, 0.09, step=0.01)
-metric = st.sidebar.selectbox('Distance Metric', ['euclidean', 'manhattan', 'cosine', 'l1', 'l2'])
+metric = st.sidebar.selectbox('Distance Metric', ['euclidean', 'manhattan', 'l1', 'l2'])
 
 # Create an instance of ClusterAnalysis with the user-defined parameters
 ca = ClusterAnalysis(influence_metrics_final, n_neighbors=n_neighbors, min_cluster_size=min_cluster_size, min_dist=min_dist, metric=metric)
@@ -141,3 +139,12 @@ standardized_residuals_sentiment = run_chisquare_analysis(df=tweet_level_metrics
 # generate heatmaps for emotion and sentiment
 heatmap(cats=['negative', 'neutral', 'positive'], title='Sentiment by Cluster', xlabel='Sentiment', df=standardized_residuals_sentiment)
 heatmap(cats=['anger', 'joy', 'optimism', 'sadness'], title='Emotion by Cluster', xlabel='Emotion', df=standardized_residuals_emotion)
+
+# print clusters 
+clusters = list(analysis_df['cluster'].drop_duplicates().sort_values())
+
+for cluster in clusters:
+    st.write(f'cluster_{cluster}')
+    names = analysis_df.loc[analysis_df['cluster']==cluster]['name']
+    st.write(names)
+

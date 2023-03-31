@@ -1,6 +1,5 @@
 import os
 import sys
-import pandas as pd
 import streamlit as st
 
 notebook_dir = os.path.dirname(os.path.abspath("__file__"))
@@ -21,7 +20,6 @@ from umap import UMAP
 from hdbscan import HDBSCAN
 import plotly.express as px
 import plotly.graph_objects as go
-import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -111,10 +109,11 @@ def heatmap(cats, title, xlabel, df):
 # Create input widgets in the sidebar
 st.title('Twitter Influence Clusters')
 st.sidebar.header('UMAP and HDBSCAN Parameters')
+st.sidebar.text('Adjust hyperparameters and see \n the impact on influencer clustering')
 n_neighbors = st.sidebar.slider('Number of Neighbors', 2, 50, 5)
 min_cluster_size = st.sidebar.slider('Minimum Cluster Size', 2, 50, 5)
 min_dist = st.sidebar.slider('Minimum Distance', 0.01, 1.0, 0.09, step=0.01)
-metric = st.sidebar.selectbox('Distance Metric', ['euclidean', 'manhattan', 'cosine', 'l1', 'l2'])
+metric = st.sidebar.selectbox('Distance Metric', ['euclidean', 'manhattan', 'l1', 'l2'])
 
 # Create an instance of ClusterAnalysis with the user-defined parameters
 ca = ClusterAnalysis(influence_metrics_final, n_neighbors=n_neighbors, min_cluster_size=min_cluster_size, min_dist=min_dist, metric=metric)
@@ -143,5 +142,7 @@ heatmap(cats=['anger', 'joy', 'optimism', 'sadness'], title='Emotion by Cluster'
 clusters = list(analysis_df['cluster'].drop_duplicates().sort_values())
 
 for cluster in clusters:
-    print(f'cluster_{cluster}')
-    print(analysis_df.loc[analysis_df['cluster']==cluster]['name'])
+    st.write(f'cluster_{cluster}')
+    names = analysis_df.loc[analysis_df['cluster']==cluster]['name']
+    st.write(names)
+
