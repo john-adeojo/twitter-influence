@@ -10,12 +10,10 @@ if project_dir not in sys.path:
     sys.path.append(project_dir)
     
 
+# import data 
 influence_metrics_final = pd.read_csv(r"https://raw.githubusercontent.com/john-adeojo/twitter-influence/main/data/02_intermediate/influence_metrics_final.csv")
+tweets_with_sentiment = pd.read_csv(r"https://github.com/john-adeojo/twitter-influence/blob/main/data/02_intermediate/tweets_with_sentiment.csv?raw=true")
 
-# from ..scripts.clustering.cluster_streamlit import ClusterAnalysis
-
-
-# import streamlit as st
 
 import pandas as pd
 import numpy as np
@@ -24,7 +22,12 @@ from hdbscan import HDBSCAN
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+import seaborn as sns
+import matplotlib.pyplot as plt
 
+
+
+# define cluster class
 class ClusterAnalysis:
     def __init__(self, dataframe, n_neighbors=15, min_cluster_size=5, min_dist=0.1, metric='euclidean'):
         self.dataframe = dataframe.copy()
@@ -62,10 +65,54 @@ class ClusterAnalysis:
         self.perform_umap()
         self.perform_hdbscan()
         self.plot_scatter()
+        
+
+        
+# define function to create a contingency table with counts of positive and non-positive samples for each cluster
+from scipy.stats import chi2_contingency
+
+def run_chisquare_analysis(df, var):
+    contingency_table = pd.crosstab(df['cluster'], df[var])
+
+    # Perform the Chi-square test
+    chi2_stat, p_value, dof, ex = chi2_contingency(contingency_table)
+
+    # Calculate the standardized residuals
+    standardized_residuals = (contingency_table - ex) / np.sqrt(ex)
+    
+    #standardized_residuals.index.name = None
+    standardized_residuals = standardized_residuals.reset_index()
+
+    print("Chi2 Stat:", chi2_stat)
+    print("P Value:", p_value)
+    print("Degrees of Freedom:", dof)
+    # print("Expected Frequency Table:")
+    # print(ex)
+
+    return standardized_residuals   
+
+
+
+
+def heatmap(cats, title, xlabel, df):
+    # Prepare the data for the heatmap
+    heatmap_data = df.set_index('cluster')[cats]
+
+    # Create the heatmap
+    plt.figure(figsize=(8, 4))
+    sns.heatmap(heatmap_data, cmap='coolwarm', annot=True, linewidths=0.5, center=0)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel('Cluster')
+
+    # Display the heatmap in Streamlit
+    st.pyplot()
+        
 
 
 
 # Create input widgets in the sidebar
+st.title('Twitter Influence Clusters')
 st.sidebar.header('UMAP and HDBSCAN Parameters')
 n_neighbors = st.sidebar.slider('Number of Neighbors', 2, 50, 5)
 min_cluster_size = st.sidebar.slider('Minimum Cluster Size', 2, 50, 5)
@@ -79,3 +126,18 @@ ca = ClusterAnalysis(influence_metrics_final, n_neighbors=n_neighbors, min_clust
 ca.run()
 scatter_fig = ca.plot_scatter()  # Get the figure object
 st.plotly_chart(scatter_fig, use_container_width=True)
+
+# create data frame for analysis
+analysis_df = ca.dataframe
+tweet_level_metrics = tweets_with_sentiment.merge(how='left', right=analysis_df[['user_id', 'cluster']], left_on='user_id', right_on='user_id')
+
+# Add a section header for the Chi-square analysis and heatmap generation
+st.header("Chi-Square Analysis and Heatmap")
+
+# run analysis on emotion and sentiment 
+standardized_residuals_emotion = run_chisquare_analysis(df=tweet_level_metrics, var='emotion')
+standardized_residuals_sentiment = run_chisquare_analysis(df=tweet_level_metrics, var='sentiment')
+
+# generate heatmaps for emotion and sentiment
+heatmap(cats=['negative', 'neutral', 'positive'], title='Sentiment by Cluster', xlabel='Sentiment', df=standardized_residuals_sentiment)
+heatmap(cats=['anger', 'joy', 'optimism', 'sadness'], title='Emotion by Cluster', xlabel='Emotion', df=standardized_residuals_emotion)
