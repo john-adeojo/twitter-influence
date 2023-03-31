@@ -36,7 +36,7 @@ class ClusterAnalysis:
                                      marker=dict(size=6, opacity=0.4), hovertext=cluster_data['name'],
                                      text=cluster_data['name'], textposition='top center', textfont=dict(size=10, color='black')))
 
-        fig.update_layout(title='Influence Clusters', showlegend=True, width=500, height=500)
+        fig.update_layout(title='Influence Clusters', showlegend=True, width=750, height=750)
         fig.show()
 
     def run(self):

@@ -24,7 +24,7 @@ class SentimentAnalyzer(TextCleaner):
         _df["cleaned_text"] = _df['text'].apply(self.clean_text)
         cleaned_text = _df["cleaned_text"].values.tolist()
         # Truncate or pad the input text to a consistent length
-        max_length = 512  # You can adjust this value according to your needs
+        max_length = 512 
         results = self.classifier(cleaned_text, padding=True, truncation=True, max_length=max_length)
         
         if self.emotion == True:
