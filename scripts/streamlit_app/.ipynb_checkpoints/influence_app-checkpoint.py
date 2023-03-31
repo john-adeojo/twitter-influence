@@ -1,7 +1,8 @@
 import os
 import sys
-import pandas as pd
 import streamlit as st
+import pandas as pd
+
 
 notebook_dir = os.path.dirname(os.path.abspath("__file__"))
 project_dir = os.path.dirname(notebook_dir)
@@ -21,7 +22,6 @@ from umap import UMAP
 from hdbscan import HDBSCAN
 import plotly.express as px
 import plotly.graph_objects as go
-import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -110,6 +110,7 @@ def heatmap(cats, title, xlabel, df):
 
 # Create input widgets in the sidebar
 st.title('Twitter Influence Clusters')
+st.markdown("### Produced by [John Adeojo](https://www.john-adeojo.com/)")
 st.sidebar.header('UMAP and HDBSCAN Parameters')
 st.sidebar.text('Adjust hyperparameters and see \n the impact on influencer clustering')
 n_neighbors = st.sidebar.slider('Number of Neighbors', 2, 50, 5)
