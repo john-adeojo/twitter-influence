@@ -7,3 +7,4 @@ seaborn==0.12.2
 matplotlib==3.7.1
 scipy==1.8.1
 numba==0.56.4
+joblib==1.1.0
