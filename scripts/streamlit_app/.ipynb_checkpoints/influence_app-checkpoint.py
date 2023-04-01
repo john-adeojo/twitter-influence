@@ -37,7 +37,7 @@ class ClusterAnalysis:
 
     def perform_umap(self):
         reducer = UMAP(n_neighbors=self.n_neighbors, min_dist=self.min_dist, metric=self.metric, random_state=42)
-        umap_data = reducer.fit_transform(self.dataframe[['favorite_count_pf_mean', 'retweet_count_pf_mean', 'quote_count_pf_mean','reply_count_pf_mean', 'anger',	'joy',	'optimism',	'sadness',	'negative',	'neutral',	'positive']])
+        umap_data = reducer.fit_transform(self.dataframe[['favorite_count_pf_norm_mean', 'retweet_count_pf_norm_mean', 'quote_count_pf_norm_mean','reply_count_pf_norm_mean', 'anger',	'joy',	'optimism',	'sadness',	'negative',	'neutral',	'positive']])
         self.dataframe['x'] = umap_data[:, 0]
         self.dataframe['y'] = umap_data[:, 1]
 
@@ -140,6 +140,21 @@ standardized_residuals_sentiment = run_chisquare_analysis(df=tweet_level_metrics
 # generate heatmaps for emotion and sentiment
 heatmap(cats=['negative', 'neutral', 'positive'], title='Sentiment by Cluster', xlabel='Sentiment', df=standardized_residuals_sentiment)
 heatmap(cats=['anger', 'joy', 'optimism', 'sadness'], title='Emotion by Cluster', xlabel='Emotion', df=standardized_residuals_emotion)
+
+
+# output tweet level metrics
+var_list = ['favorite_count_pf_norm_mean', 'retweet_count_pf_norm_mean', 'quote_count_pf_norm_mean', 'reply_count_pf_norm_mean']
+
+# Iterate over the columns and create a distribution plot for each
+for var in var_list:
+    fig = px.box(tweet_level_metrics, x="cluster", y=var, color="cluster")
+    fig.update_layout(
+        title=f"Distribution of {var} by Cluster",
+        xaxis_title="Cluster",
+        yaxis_title=var,
+        legend_title="Cluster",
+    )
+    fig.show()
 
 # print clusters 
 clusters = list(analysis_df['cluster'].drop_duplicates().sort_values())

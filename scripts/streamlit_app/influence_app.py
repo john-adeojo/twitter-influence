@@ -141,6 +141,21 @@ standardized_residuals_sentiment = run_chisquare_analysis(df=tweet_level_metrics
 heatmap(cats=['negative', 'neutral', 'positive'], title='Sentiment by Cluster', xlabel='Sentiment', df=standardized_residuals_sentiment)
 heatmap(cats=['anger', 'joy', 'optimism', 'sadness'], title='Emotion by Cluster', xlabel='Emotion', df=standardized_residuals_emotion)
 
+
+# output tweet level metrics
+var_list = ['favorite_count_pf_log_1', 'retweet_count_pf_log_1', 'quote_count_pf_log_1', 'reply_count_pf_log_1']
+
+# Iterate over the columns and create a distribution plot for each
+for var in var_list:
+    fig = px.box(tweet_level_metrics, x="cluster", y=var, color="cluster")
+    fig.update_layout(
+        title=f"Distribution of {var} by Cluster",
+        xaxis_title="Cluster",
+        yaxis_title=var,
+        legend_title="Cluster",
+    )
+    fig.show()
+
 # print clusters 
 clusters = list(analysis_df['cluster'].drop_duplicates().sort_values())
 
