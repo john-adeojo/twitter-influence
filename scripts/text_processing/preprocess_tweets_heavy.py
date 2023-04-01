@@ -29,30 +29,6 @@ class TextCleaner():
         # Remove @ symbols and # symbols
         text = re.sub(r'[@#]\w+', '', text)
 
-        # Remove variations of "royal mail"
-        text = re.sub(r'royal\s*mail', '', text, flags=re.IGNORECASE)
-        
-        # Remove variations of "stamp"
-        text = re.sub(r'stamp\w*', '', text, flags=re.IGNORECASE)
-        
-        # Remove variations of "post"
-        text = re.sub(r'post\w*', '', text, flags=re.IGNORECASE)
-        
-        # Remove variations of "delivery"
-        text = re.sub(r'delivery\w*', '', text, flags=re.IGNORECASE)
-        
-        # Remove variations of "delivered"
-        text = re.sub(r'delivered\w*', '', text, flags=re.IGNORECASE)
-        
-        # Remove variations of "parcel"
-        text = re.sub(r'parcel\w*', '', text, flags=re.IGNORECASE)
-        
-        # Remove variations of "worker"
-        text = re.sub(r'worker\w*', '', text, flags=re.IGNORECASE)
-
-        # Remove variations of "day"
-        text = re.sub(r'day\w*', '', text, flags=re.IGNORECASE)
-
         # Tokenize the text and convert to lowercase
         tokens = word_tokenize(text)
         tokens = [token.lower() for token in tokens]
