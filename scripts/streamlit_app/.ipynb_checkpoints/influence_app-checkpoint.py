@@ -143,7 +143,7 @@ heatmap(cats=['anger', 'joy', 'optimism', 'sadness'], title='Emotion by Cluster'
 
 
 # output tweet level metrics
-var_list = ['favorite_count_pf_norm_mean', 'retweet_count_pf_norm_mean', 'quote_count_pf_norm_mean', 'reply_count_pf_norm_mean']
+var_list = ['favorite_count_pf_log_1', 'retweet_count_pf_log_1', 'quote_count_pf_log_1', 'reply_count_pf_log_1']
 
 # Iterate over the columns and create a distribution plot for each
 for var in var_list:
@@ -154,7 +154,7 @@ for var in var_list:
         yaxis_title=var,
         legend_title="Cluster",
     )
-    fig.show()
+    st.plotly_chart(fig)
 
 # print clusters 
 clusters = list(analysis_df['cluster'].drop_duplicates().sort_values())

@@ -154,7 +154,7 @@ for var in var_list:
         yaxis_title=var,
         legend_title="Cluster",
     )
-    fig.show()
+    st.plotly_chart(fig)
 
 # print clusters 
 clusters = list(analysis_df['cluster'].drop_duplicates().sort_values())
