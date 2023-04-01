@@ -16,7 +16,7 @@ class ClusterAnalysis:
 
     def perform_umap(self):
         reducer = UMAP(n_neighbors=self.n_neighbors, min_dist=self.min_dist, metric=self.metric, random_state=42)
-        umap_data = reducer.fit_transform(self.dataframe[['favorite_count_pf_mean', 'retweet_count_pf_mean', 'quote_count_pf_mean','reply_count_pf_mean', 'anger',	'joy',	'optimism',	'sadness',	'negative',	'neutral',	'positive']])
+        umap_data = reducer.fit_transform(self.dataframe[['favorite_count_pf_norm_mean', 'retweet_count_pf_norm_mean', 'quote_count_pf_norm_mean','reply_count_pf_norm_mean', 'anger',	'joy',	'optimism',	'sadness',	'negative',	'neutral',	'positive']])
         self.dataframe['x'] = umap_data[:, 0]
         self.dataframe['y'] = umap_data[:, 1]
 

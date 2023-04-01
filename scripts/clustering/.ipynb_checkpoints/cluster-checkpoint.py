@@ -16,7 +16,7 @@ class ClusterAnalysis:
 
     def perform_umap(self):
         reducer = UMAP(n_neighbors=self.n_neighbors, min_dist=self.min_dist, metric=self.metric, random_state=42)
-        umap_data = reducer.fit_transform(self.dataframe[['favorite_count_pf_mean', 'retweet_count_pf_mean', 'quote_count_pf_mean','reply_count_pf_mean', 'anger',	'joy',	'optimism',	'sadness',	'negative',	'neutral',	'positive']])
+        umap_data = reducer.fit_transform(self.dataframe[['favorite_count_pf_norm_mean', 'retweet_count_pf_norm_mean', 'quote_count_pf_norm_mean','reply_count_pf_norm_mean', 'anger',	'joy',	'optimism',	'sadness',	'negative',	'neutral',	'positive']])
         self.dataframe['x'] = umap_data[:, 0]
         self.dataframe['y'] = umap_data[:, 1]
 
@@ -24,7 +24,6 @@ class ClusterAnalysis:
         np.random.seed(42)
         clusterer = HDBSCAN(min_cluster_size=self.min_cluster_size, metric=self.metric)
         self.dataframe['cluster'] = clusterer.fit_predict(self.dataframe[['x', 'y']])
-        #self.dataframe.to_csv(r"C:\Users\johna\anaconda3\envs\twitter-influence-env\twitter-influence\data\02_intermediate\tweet_analysis_data.csv", index=False)
     
     def plot_scatter(self):
         unique_clusters = sorted(self.dataframe['cluster'].unique())
