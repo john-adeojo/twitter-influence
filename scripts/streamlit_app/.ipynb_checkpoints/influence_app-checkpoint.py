@@ -115,7 +115,7 @@ st.sidebar.header('UMAP and HDBSCAN Parameters')
 st.sidebar.text('Adjust hyperparameters and see \n the impact on influencer clustering')
 n_neighbors = st.sidebar.slider('Number of Neighbors', 2, 50, 5)
 min_cluster_size = st.sidebar.slider('Minimum Cluster Size', 2, 50, 5)
-min_dist = st.sidebar.slider('Minimum Distance', 0.01, 1.0, 0.09, step=0.01)
+min_dist = st.sidebar.slider('Minimum Distance', 0.01, 1.0, 0.07, step=0.01)
 metric = st.sidebar.selectbox('Distance Metric', ['euclidean', 'manhattan', 'l1', 'l2'])
 
 # Create an instance of ClusterAnalysis with the user-defined parameters
